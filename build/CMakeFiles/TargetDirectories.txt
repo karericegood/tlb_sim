@@ -1,0 +1,3 @@
+/home/kim/tlb_sim/build/CMakeFiles/rebuild_cache.dir
+/home/kim/tlb_sim/build/CMakeFiles/edit_cache.dir
+/home/kim/tlb_sim/build/CMakeFiles/tlb_sim.dir
