@@ -4,10 +4,29 @@
 #include "tlb.h"
 #include "cpu.h"
 
-void run(){
-    
+struct PAGE_TABLE *page_table ; 
+struct TLB *tlb ; 
+struct TRACE *trace ; 
+
+void init(char* filename){
+    init_trace(trace); 
+    init_tlb(tlb); 
+    init_page_table(page_table);
+    read_trace(trace, filename);
+}
+
+void run(struct PAGE_TABLE *page_table, struct TLB *tlb, struct TRACE *trace){
+    while(1){
+        int64_t virt_addr = issue_intruction(trace);
+        if (virt_addr == -1){
+            break ; 
+        }
+        access_tlb(tlb,virt_addr);
+    }
 }
 int main(){
-    run();
+    char filename[] = "";
+    init(filename);
+    run(page_table, tlb, trace);
     return 0; 
 }

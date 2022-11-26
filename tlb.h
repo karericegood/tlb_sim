@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 struct TLB_ENTRY;
 struct TLB; 
 void init_tlb(struct TLB *tlb); 

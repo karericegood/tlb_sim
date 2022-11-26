@@ -18,6 +18,7 @@ struct TLB{
 };
 
 void init_tlb(struct TLB *tlb){
+    tlb = (struct TLB *) malloc(sizeof(struct TLB));
     for (int i = 0 ; i < MAX_TLB_ENTRY_NUM ; i++){
         tlb->tlb_entry[i].page_num = -1 ;
         tlb->tlb_entry[i].frame_num = -1 ;  

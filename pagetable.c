@@ -18,9 +18,10 @@ struct PAGE_TABLE{
 };
 
 void init_page_table(struct PAGE_TABLE *page_table){
+    page_table = (struct PAGE_TABLE*) malloc(sizeof(struct PAGE_TABLE));
     for (int i = 0; i < MAX_PAGE_TABLE_DIR_NUM; i++){
         page_table->page_table_dir->valid = 1 ; 
-        page_table->page_table_dir->page_dir_number = i;
+        page_table->page_table_dir->page_dir_number = i; 
         for (int j = 0 ; j < MAX_PAGE_TABLE_ENTRY_NUM; j++){
             page_table->page_table_dir->page_table_entry[j].valid = 1; 
             page_table->page_table_dir->page_table_entry[j].protected = 0 ; 

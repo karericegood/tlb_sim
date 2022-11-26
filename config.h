@@ -1,5 +1,7 @@
  
+
 #define MAX_PAGE_TABLE_DIR_NUM (2 << 18)
 #define MAX_PAGE_TABLE_ENTRY_NUM (2 << 18)
 #define MAX_TLB_ENTRY_NUM 100 
-#define MAX_TRACE_LINE 1000 
+#define MAX_TRACE_LINE 1000
+#define MAX_CHAR_PER_LINE 30  
