@@ -21,12 +21,14 @@ void run(struct PAGE_TABLE *page_table, struct TLB *tlb, struct TRACE *trace){
         if (virt_addr == -1){
             break ; 
         }
-        access_tlb(tlb,virt_addr);
+        access_tlb(tlb,virt_addr, page_table);
     }
 }
 int main(){
-    char filename[] = "";
+    char filename[] = "sample/400_perlbench.out";
     init(filename);
+    return 0 ;
+
     run(page_table, tlb, trace);
     return 0; 
 }
