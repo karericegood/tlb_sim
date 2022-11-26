@@ -16,26 +16,38 @@ int init_trace(struct TRACE* trace){
     trace = malloc(sizeof(struct TRACE));
     trace->inst_trace = (char**)malloc(sizeof(char*)*MAX_TRACE_LINE);
     for (int i = 0 ; i < MAX_TRACE_LINE ; i++){
-        trace->inst_trace[i] = (char*)malloc(sizeof(char)*MAX_CHAR_PER_LINE);
-    }
+        trace->inst_trace[i] = (char*)malloc(sizeof(char)*MAX_CHAR_PER_LINE);  
+        
+    } 
     trace->read_count = 0 ; 
 }
 
 void read_trace(struct TRACE* trace, char* filename){
-    FILE *f = NULL ; 
-    f = fopen(filename, "r");
+    trace = malloc(sizeof(struct TRACE));
+    trace->inst_trace = (char**)malloc(sizeof(char*)*MAX_TRACE_LINE);
+    for (int i = 0 ; i < MAX_TRACE_LINE ; i++){
+        trace->inst_trace[i] = (char*)malloc(sizeof(char)*MAX_CHAR_PER_LINE);   
+    } 
+    trace->read_count = 0 ;   
+    FILE *f = NULL ;
+    f = fopen("../400_perlbench.out", "r");
     char buffer[MAX_CHAR_PER_LINE] = {0,};
     char* line ;
-     if (f == NULL){
+    if (f == NULL){
         perror("No file exsit!\n");
     }    
     int count = 0 ;
-    while(!feof(f)){
+    while(1){
+        if (feof(f) != 0){
+            printf("end of file.. done reading trace\n");
+            trace->total_count = count ; 
+            break ;
+        }
         line = fgets(buffer, MAX_CHAR_PER_LINE, f);
-        strcpy(trace->inst_trace[count++], line);
-        printf("%s", line);
+        strcpy(trace->inst_trace[count], line);
+        count += 1 ; 
     } 
-    trace->total_count = count ; 
+    
     fclose(f);
 }
 

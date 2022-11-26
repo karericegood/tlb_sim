@@ -8,8 +8,7 @@ struct PAGE_TABLE *page_table ;
 struct TLB *tlb ; 
 struct TRACE *trace ; 
 
-void init(char* filename){
-    init_trace(trace); 
+void init(struct TRACE *trace,char* filename){ 
     init_tlb(tlb); 
     init_page_table(page_table);
     read_trace(trace, filename);
@@ -25,8 +24,8 @@ void run(struct PAGE_TABLE *page_table, struct TLB *tlb, struct TRACE *trace){
     }
 }
 int main(){
-    char filename[] = "sample/400_perlbench.out";
-    init(filename);
+    char filename[] = "400_perlbench.out";
+    init(trace, filename);
     return 0 ;
 
     run(page_table, tlb, trace);
