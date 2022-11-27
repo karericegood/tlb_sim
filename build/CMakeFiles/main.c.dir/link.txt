@@ -1,1 +1,0 @@
-/usr/bin/cc   -rdynamic CMakeFiles/main.c.dir/cpu.c.o CMakeFiles/main.c.dir/pagetable.c.o CMakeFiles/main.c.dir/tlb.c.o  -o main.c 

@@ -1,1 +1,0 @@
-/usr/bin/cc   -rdynamic CMakeFiles/tlb_sim.dir/main.c.o CMakeFiles/tlb_sim.dir/cpu.c.o CMakeFiles/tlb_sim.dir/pagetable.c.o CMakeFiles/tlb_sim.dir/tlb.c.o  -o tlb_sim 
