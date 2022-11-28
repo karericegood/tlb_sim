@@ -2,21 +2,21 @@
 #include "config.h"
 #include "tlb.h"
 #include "cpu.h"
-
+#include <string.h>
 struct PAGE_TABLE *page_table ; 
 struct TLB *tlb ; 
 struct TRACE *trace ; 
+int tlb_miss = 0  ; 
+int tlb_hit = 0 ; 
 
 
 
-void run(struct TLB *tlb, struct TRACE *trace,char* filename){
-    
-    
+void run(struct TLB *tlb, struct TRACE *trace,char* filename){ 
     tlb = (struct TLB *) malloc(sizeof(struct TLB));
     for (int i = 0 ; i < MAX_TLB_ENTRY_NUM ; i++){
         tlb->tlb_entry[i].page_num = -1 ;
         tlb->tlb_entry[i].frame_num = -1 ;  
-    }    //init_page_table(page_table);
+    }    
     
     trace = (struct TRACE *)malloc(sizeof(struct TRACE));
     trace->inst_trace = (char**)malloc(sizeof(char*)*MAX_TRACE_LINE);
@@ -45,17 +45,20 @@ void run(struct TLB *tlb, struct TRACE *trace,char* filename){
     }  
     fclose(f);
     printf("=== Start issue instruction ===\n");
+    int cal = 0 ; 
     while(1){
         int64_t virt_addr = issue_intruction(trace);
         if (virt_addr == -1){
             break ; 
         }
         access_tlb(tlb,virt_addr);
+        
     }
 }
 int main(){
-    char filename[] = "../400_perlbench.out";
-   
+    char filename[] = "../source/400_perlbench.out";
     run(tlb, trace,filename);
+    printf("=== hit count : %d ===\n", tlb_hit);
+    printf("=== miss count : %d ===\n", tlb_miss);
     return 0; 
 }

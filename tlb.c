@@ -6,6 +6,8 @@
 #include <stdlib.h>
 
 extern struct PAGE_TABLE *page_table ; 
+extern int tlb_miss ; 
+extern int tlb_hit ; 
 
 
 
@@ -15,7 +17,7 @@ void init_tlb(struct TLB *tlb){
 
 int64_t tlb_translate_page_num(uint64_t virtual_address){
 
-    int64_t modified_range = (virtual_address >> 12) & 0x2ffff;
+    int64_t modified_range = (virtual_address >> 12) & 0x2ffffffff;
     
     return modified_range ;  
 }
@@ -23,7 +25,7 @@ int64_t tlb_translate_page_num(uint64_t virtual_address){
 int64_t tlb_find_frame_num(struct TLB *tlb, int64_t page_num){
 
     for (int i = 0 ; i < MAX_TLB_ENTRY_NUM ; i++){
-        if (tlb->tlb_entry[i].frame_num == page_num){
+        if (tlb->tlb_entry[i].page_num == page_num){
             return tlb->tlb_entry[i].frame_num ; 
         }  
     }
@@ -74,11 +76,12 @@ int64_t access_tlb(struct TLB *tlb, uint64_t virtual_address){
     int64_t page_num = tlb_translate_page_num(virtual_address);
     //search the matching frame num 
     int64_t ret = tlb_find_frame_num(tlb, page_num);
-    if (!ret){
-      
+    if (ret == -1){
         tlb_update_entry(tlb, virtual_address);
+        tlb_miss += 1; 
         return -1;     
     }
+    tlb_hit += 1; 
     return ret ; 
 
 }
