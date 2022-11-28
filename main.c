@@ -9,8 +9,6 @@ struct TRACE *trace ;
 int tlb_miss = 0  ; 
 int tlb_hit = 0 ; 
 
-
-
 void run(struct TLB *tlb, struct TRACE *trace,char* filename){ 
     tlb = (struct TLB *) malloc(sizeof(struct TLB));
     for (int i = 0 ; i < MAX_TLB_ENTRY_NUM ; i++){
@@ -52,6 +50,7 @@ void run(struct TLB *tlb, struct TRACE *trace,char* filename){
             break ; 
         }
         access_tlb(tlb,virt_addr);
+        
         
     }
 }

@@ -17,7 +17,7 @@ void init_tlb(struct TLB *tlb){
 
 int64_t tlb_translate_page_num(uint64_t virtual_address){
 
-    int64_t modified_range = (virtual_address >> 12) & 0x2ffffffff;
+    int64_t modified_range = (virtual_address >> 12) & 0xffffffffffff;
     
     return modified_range ;  
 }
@@ -45,7 +45,7 @@ int translate_dir_num(int64_t virtual_address){
 }
 
 int translate_entry_num(int64_t virtual_address){
-    int entry_region = (virtual_address >> 12) & 0x2ffff;
+    int entry_region = (virtual_address >> 12) & 0x3ffff;
     return entry_region ; 
 }
 void tlb_update_with_space(struct TLB * tlb, int isSpace ,uint64_t virtual_address){
@@ -55,7 +55,7 @@ void tlb_update_with_space(struct TLB * tlb, int isSpace ,uint64_t virtual_addre
 
 void tlb_update_with_nospace(struct TLB * tlb, uint64_t virtual_address){
     //replacement policy... -> need to specify.. 
-    int evict_num = rand() % 100 ; 
+    int evict_num = rand() % MAX_TLB_ENTRY_NUM; 
     tlb->tlb_entry[evict_num].page_num = tlb_translate_page_num(virtual_address);
     tlb->tlb_entry[evict_num].frame_num = (translate_dir_num(virtual_address) << 18) + translate_entry_num(virtual_address); 
 }
@@ -71,8 +71,7 @@ void tlb_update_entry(struct TLB * tlb, uint64_t virtual_address){
     }
 }
 
-int64_t access_tlb(struct TLB *tlb, uint64_t virtual_address){
-   
+int64_t access_tlb(struct TLB *tlb, uint64_t virtual_address){ 
     int64_t page_num = tlb_translate_page_num(virtual_address);
     //search the matching frame num 
     int64_t ret = tlb_find_frame_num(tlb, page_num);

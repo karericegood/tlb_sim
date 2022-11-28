@@ -40,20 +40,19 @@ void read_trace(struct TRACE* trace, char* filename){
 }
 
 int64_t issue_intruction(struct TRACE* trace){
-    
-    if (trace -> total_count <= trace -> read_count){
+    if (trace ->total_count <= trace -> read_count){
         return - 1 ; 
     }
   
     char* _this = strtok(trace->inst_trace[trace->read_count], " "); 
     int count = 0  ; 
     while(_this != NULL){
-        if (count == 1){
+        if (count >= 1){
             break;
         }
         _this = strtok(NULL, " ");
-        trace->read_count += 1 ;
-
+        trace->read_count += 1 ; 
+        
         count ++ ; 
     }    
     char this[30];
