@@ -1,1 +1,1 @@
-ADD_EXECUTABLE(tlb_sim main.c tlb.c cpu.c)
+ADD_EXECUTABLE(tlb_sim main.c tlb.c)

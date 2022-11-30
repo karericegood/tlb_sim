@@ -1,31 +1,28 @@
 #include <stdio.h>
 #include "config.h"
 #include "tlb.h"
-#include "cpu.h"
+//#include "cpu.h"
 #include <string.h>
-struct PAGE_TABLE *page_table ; 
+#include <stdlib.h>
+//struct PAGE_TABLE *page_table ; 
 struct TLB *tlb ; 
-struct TRACE *trace ; 
 int tlb_miss = 0  ; 
 int tlb_hit = 0 ; 
 
-void run(struct TLB *tlb, struct TRACE *trace,char* filename){ 
+void run(struct TLB *tlb, char* filename){ 
     tlb = (struct TLB *) malloc(sizeof(struct TLB));
     for (int i = 0 ; i < MAX_TLB_ENTRY_NUM ; i++){
         tlb->tlb_entry[i].page_num = -1 ;
         tlb->tlb_entry[i].frame_num = -1 ;  
     }    
     
-    trace = (struct TRACE *)malloc(sizeof(struct TRACE));
-    trace->inst_trace = (char**)malloc(sizeof(char*)*MAX_TRACE_LINE);
-    for (int i = 0 ; i < MAX_TRACE_LINE ; i++){
-        trace->inst_trace[i] = (char*)malloc(sizeof(char)*MAX_CHAR_PER_LINE);   
-    } 
-    trace->read_count = 0 ;   
     FILE *f = NULL ;
     f = fopen(filename, "r");
     char buffer[MAX_CHAR_PER_LINE] = {0,};
     char* line ;
+    char* v_addr_str;
+    char* op;
+    int64_t v_addr_int ;
     if (f == NULL){
         perror("No file exsit!\n");
     }    
@@ -33,30 +30,28 @@ void run(struct TLB *tlb, struct TRACE *trace,char* filename){
     while(1){
         if (feof(f) != 0){
             printf("end of file.. done reading trace\n");
-            trace->total_count = count ; 
-            printf("total count is %d\n", trace->total_count);
             break ;
         }
         line = fgets(buffer, MAX_CHAR_PER_LINE, f);
-        strcpy(trace->inst_trace[count], line);
-        count += 1 ; 
+        op=strtok(line, " ");
+        v_addr_str = strtok(NULL, " ");
+        v_addr_int = strtoll(v_addr_str, NULL,16);
+        count++;
+        //access_tlb_random(tlb,v_addr_int);
+        access_tlb_lru(tlb,v_addr_int);
+        for(int i = 0; i < MAX_TLB_ENTRY_NUM; i++){
+            printf("%d, %ld, %ld\n", i, tlb->tlb_entry[i].page_num, tlb->tlb_entry[i].frame_num);
+            
+        }
+        if(count == 100)
+            break;
     }  
     fclose(f);
-    printf("=== Start issue instruction ===\n");
-    int cal = 0 ; 
-    while(1){
-        int64_t virt_addr = issue_intruction(trace);
-        if (virt_addr == -1){
-            break ; 
-        }
-        access_tlb(tlb,virt_addr);
-        
-        
-    }
 }
+
 int main(){
-    char filename[] = "../source/400_perlbench.out";
-    run(tlb, trace,filename);
+    char filename[] = "./400_perlbench.out";
+    run(tlb, filename);
     printf("=== hit count : %d ===\n", tlb_hit);
     printf("=== miss count : %d ===\n", tlb_miss);
     return 0; 
