@@ -8,6 +8,7 @@
 extern struct PAGE_TABLE *page_table ; 
 extern int tlb_miss ; 
 extern int tlb_hit ; 
+extern int p_option;
 
 ListNode *head = NULL;
 
@@ -144,15 +145,17 @@ void tlb_update_entry_lru(struct TLB * tlb, uint64_t virtual_address){
         head = insert_first(head, idx);
         tlb->tlb_entry[idx].page_num= tlb_translate_page_num(virtual_address);
         tlb->tlb_entry[idx].frame_num = (translate_dir_num(virtual_address) << 18) + translate_entry_num(virtual_address);
-        printf("Miss With Eviction Occurs!!\n"); 
-        print_list(head);
+        if(p_option == 1){
+            printf("Miss With Eviction Occurs!!\n"); 
+            print_list(head);}
     }
     else{
         tlb_update_with_space(tlb, isSpace, virtual_address);
         idx = isSpace;
         head = insert_first(head, idx);
-        printf("Cold Miss occurs!!\n");
-        print_list(head);
+        if(p_option == 1){
+            printf("Cold Miss occurs!!\n");
+            print_list(head);}
     }
 }
 
@@ -173,7 +176,8 @@ int64_t access_tlb_random(struct TLB *tlb, uint64_t virtual_address){
 int64_t access_tlb_lru(struct TLB *tlb, uint64_t virtual_address){
    int64_t page_num = tlb_translate_page_num(virtual_address);
     //search the matching frame num
-    printf("Virtual address num : %ld, page_num : %ld\n", virtual_address, page_num);
+    if(p_option == 1)
+        printf("Virtual address num : %ld, page_num : %ld\n", virtual_address, page_num);
     int ret = tlb_find_frame_num(tlb, page_num);
 
     if (ret == -1){
@@ -181,11 +185,13 @@ int64_t access_tlb_lru(struct TLB *tlb, uint64_t virtual_address){
         tlb_miss += 1;
         return -1;
     }
-    printf("Hit occurs, tlb_idx : %d\n", ret);
+    if(p_option == 1)
+        printf("Hit occurs, tlb_idx : %d\n", ret);
     head = delete_value(head, ret);
     head = insert_first(head, ret);
     tlb_hit += 1;
-    print_list(head);
+    if(p_option == 1){
+        print_list(head);}
     return ret;
 }
 

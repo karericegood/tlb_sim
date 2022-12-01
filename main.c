@@ -8,6 +8,7 @@
 struct TLB *tlb ; 
 int tlb_miss = 0  ; 
 int tlb_hit = 0 ; 
+int p_option = 0; //print_option
 
 void run(struct TLB *tlb, char* filename){ 
     tlb = (struct TLB *) malloc(sizeof(struct TLB));
@@ -35,22 +36,31 @@ void run(struct TLB *tlb, char* filename){
         line = fgets(buffer, MAX_CHAR_PER_LINE, f);
         op=strtok(line, " ");
         v_addr_str = strtok(NULL, " ");
+        if(v_addr_str == NULL)
+            break;
         v_addr_int = strtoll(v_addr_str, NULL,16);
-        count++;
         //access_tlb_random(tlb,v_addr_int);
         access_tlb_lru(tlb,v_addr_int);
-        for(int i = 0; i < MAX_TLB_ENTRY_NUM; i++){
-            printf("%d, %ld, %ld\n", i, tlb->tlb_entry[i].page_num, tlb->tlb_entry[i].frame_num);
-            
+        if(p_option == 1){
+            for(int i = 0; i < MAX_TLB_ENTRY_NUM; i++){
+                printf("%d, %ld, %ld\n", i, tlb->tlb_entry[i].page_num, tlb->tlb_entry[i].frame_num);
+            }
         }
-        if(count == 100)
-            break;
+        //if(count == 100000000)
+        //    break;
+        //count++;
     }  
     fclose(f);
 }
 
-int main(){
+int main(int argc, char* argv[]){
     char filename[] = "./400_perlbench.out";
+
+    if(argv[1] !=  NULL){
+        if(atoi(argv[1]) == 1){
+            p_option = 1;
+        }
+    }
     run(tlb, filename);
     printf("=== hit count : %d ===\n", tlb_hit);
     printf("=== miss count : %d ===\n", tlb_miss);
