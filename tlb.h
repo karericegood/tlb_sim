@@ -26,9 +26,9 @@ void tlb_update_with_space(struct TLB * tlb, int isSpace ,uint64_t virtual_addre
 
 void tlb_update_entry_random(struct TLB * tlb, uint64_t virtual_address); 
 void tlb_update_entry_lru(struct TLB * tlb, uint64_t virtual_address); 
+void tlb_update_entry_lfu(struct TLB * tlb, uint64_t virtual_address);
 
-int64_t access_tlb_random(struct TLB *tlb, uint64_t virtual_address); 
-int64_t access_tlb_lru(struct TLB *tlb, uint64_t virtual_address);
+int64_t access_tlb(struct TLB *tlb, uint64_t virtual_address, int policy);
 
 int translate_entry_num(int64_t virtual_address);
 int translate_dir_num(int64_t virtual_address);
