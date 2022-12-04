@@ -229,6 +229,47 @@ void tlb_update_entry_scr(struct TLB * tlb, uint64_t virtual_address){
             for(int i = 0; i < MAX_TLB_ENTRY_NUM; i++){
                 printf("%d ", lfu_array[i]);
             }
+            printf("end\n");
+        }
+    }
+}
+
+void tlb_update_entry_lrfu(struct TLB *tlb, uint64_t virtual_address){
+    int isSpace = tlb_is_space(tlb);
+    int idx;
+    if( isSpace == -1){
+        while(1){
+            idx = delete_oldest(head);
+            if(lfu_array[idx] <= 0){
+                break;
+            }
+            lfu_array[idx] -= 1; // We can Regulate This number
+            head = insert_first(head, idx);
+        }
+        head = insert_first(head, idx);
+        tlb->tlb_entry[idx].page_num = tlb_translate_page_num(virtual_address);
+        tlb->tlb_entry[idx].frame_num = (translate_dir_num(virtual_address) << 18) + translate_entry_num(virtual_address);
+        if(p_option == 1){
+            printf("Miss With Eviction Occurs !!\n");
+            print_list(head);
+            for(int i = 0; i < MAX_TLB_ENTRY_NUM; i++){
+                printf("%d ", lfu_array[i]);
+            }
+            printf("end\n");
+        }
+    }
+    else{
+        tlb_update_with_space(tlb, isSpace, virtual_address);
+        idx = isSpace;
+        head = insert_first(head, idx);
+        lfu_array[idx] = 1;
+        if(p_option == 1){
+            printf("Cold Miss occurs!!\n");
+            print_list(head);
+            for(int i = 0; i < MAX_TLB_ENTRY_NUM; i++){
+                printf("%d ", lfu_array[i]);
+            }
+            printf("end\n");
         }
     }
 }
@@ -256,6 +297,12 @@ int64_t access_tlb(struct TLB *tlb, uint64_t virtual_address, int policy){
                 break;
             case 4: //Second Chance Replacement
                 tlb_update_entry_scr(tlb, virtual_address);
+                break;
+            case 5: //Second Chance With LRU
+                tlb_update_entry_scr(tlb, virtual_address);
+                break;
+            case 6: //lfu with lru 
+                tlb_update_entry_lrfu(tlb, virtual_address);
                 break;
         }
         tlb_miss += 1;
@@ -297,6 +344,28 @@ int64_t access_tlb(struct TLB *tlb, uint64_t virtual_address, int policy){
                 printf("end\n");
             }
             break;
+        case 5: // Second Chance With LRU
+            lfu_array[ret] = 1;
+            head = delete_value(head, ret);
+            head = insert_first(head, ret);
+            if(p_option == 1){
+                print_list(head);
+                for(int i = 0; i < MAX_TLB_ENTRY_NUM; i++){
+                    printf("%d ", lfu_array[i]);
+                }
+                printf("end\n");
+            }
+        case 6: // lfu with lru
+            lfu_array[ret] += 1;
+            head = delete_value(head, ret);
+            head = insert_first(head, ret);
+            if(p_option == 1){
+                print_list(head);
+                for(int i = 0; i < MAX_TLB_ENTRY_NUM; i++){
+                    printf("%d ", lfu_array[i]);
+                }
+                printf("end\n");
+            }
     }
     tlb_hit += 1;
     return ret;

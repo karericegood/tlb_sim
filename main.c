@@ -39,17 +39,17 @@ void run(struct TLB *tlb, char* filename){
         if(v_addr_str == NULL)
             break;
         v_addr_int = strtoll(v_addr_str, NULL,16);
-        access_tlb(tlb, v_addr_int, 4); 
+        access_tlb(tlb, v_addr_int, 1); 
         //aceess_tlb(tlb, v_addr_int, policy)
-        //Policy 0: random, Policy 1: LRU, Policy 2: LFU, Policy 3: FIFO, Policy 4: SCR, Policy 5: Ours 
+        //Policy 0: random, Policy 1: LRU, Policy 2: LFU, Policy 3: FIFO, Policy 4: SCR, Policy 5: SCR with LRU, Policy 6 : LRFU 
         if(p_option == 1){
             for(int i = 0; i < MAX_TLB_ENTRY_NUM; i++){
                 printf("%d, %ld, %ld\n", i, tlb->tlb_entry[i].page_num, tlb->tlb_entry[i].frame_num);
             }
         }
-        if(count == 30)
-            break;
-        count++;
+        //if(count == 20000)
+        //    break;
+        //count++;
     }  
     fclose(f);
 }
